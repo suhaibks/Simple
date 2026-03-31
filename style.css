@@ -82,3 +82,43 @@ footer {
   text-align: center;
   padding: 20px;
 }
+
+/* MOBILE (<=768px) */
+@media (max-width: 768px) {
+
+  /* NAVBAR */
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .navbar div {
+    display: flex;
+    gap: 10px;
+  }
+
+  /* HERO */
+  .hero {
+    margin: 15px;
+    padding: 50px 15px;
+  }
+
+  .hero h1 {
+    font-size: 22px;
+  }
+
+  .hero p {
+    font-size: 14px;
+  }
+
+  /* FEATURES */
+  .features {
+    padding: 30px 15px;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+}
