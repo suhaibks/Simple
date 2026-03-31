@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
 <title>Branches</title>
@@ -25,7 +25,10 @@
 <h1>Branches</h1>
 
 <div class="form-box">
-<input type="text" id="branchName" placeholder="Branch Name">
+<input id="branchName" placeholder="Branch Name">
+<input id="branchLocation" placeholder="Location">
+<input id="branchManager" placeholder="Manager">
+<input id="branchPhone" placeholder="Phone">
 <button onclick="addBranch()">Add</button>
 </div>
 
@@ -36,61 +39,61 @@
 
 <script>
 
-function logout() {
-if (confirm("Logout?")) {
+function logout(){
+if(confirm("Logout?")){
 localStorage.removeItem("loggedIn");
-window.location.href = "login.html";
+location.href="login.html";
 }
 }
 
-function addBranch() {
-const name = document.getElementById("branchName").value.trim();
+function addBranch(){
+let name=branchName.value.trim();
+let location=branchLocation.value;
+let manager=branchManager.value;
+let phone=branchPhone.value;
 
-if (!name) return alert("Enter branch name");
+if(!name||!location)return alert("Fill required");
 
-let branches = JSON.parse(localStorage.getItem("branches")) || [];
+let branches=JSON.parse(localStorage.getItem("branches"))||[];
 
-/* prevent duplicate */
-if (branches.some(b => b.name.toLowerCase() === name.toLowerCase())) {
-return alert("Branch already exists");
+if(branches.some(b=>b.name.toLowerCase()===name.toLowerCase())){
+return alert("Exists");
 }
 
-branches.push({ name });
-localStorage.setItem("branches", JSON.stringify(branches));
+branches.push({id:Date.now(),name,location,manager,phone});
+localStorage.setItem("branches",JSON.stringify(branches));
 
 loadBranches();
 }
 
-function deleteBranch(index) {
-let branches = JSON.parse(localStorage.getItem("branches")) || [];
-branches.splice(index, 1);
-localStorage.setItem("branches", JSON.stringify(branches));
+function deleteBranch(i){
+let branches=JSON.parse(localStorage.getItem("branches"))||[];
+branches.splice(i,1);
+localStorage.setItem("branches",JSON.stringify(branches));
 loadBranches();
 }
 
-function loadBranches() {
-const branches = JSON.parse(localStorage.getItem("branches")) || [];
-const list = document.getElementById("branchList");
-list.innerHTML = "";
+function loadBranches(){
+let branches=JSON.parse(localStorage.getItem("branches"))||[];
+branchList.innerHTML="";
 
-branches.forEach((b, i) => {
-list.innerHTML += `
+branches.forEach((b,i)=>{
+branchList.innerHTML+=`
 <li>
-${b.name}
-<button onclick="deleteBranch(${i})">Delete</button>
+<strong>${b.name}</strong> (${b.location})<br>
+Manager: ${b.manager||"-"} | Phone: ${b.phone||"-"}
+<br><button onclick="deleteBranch(${i})">Delete</button>
 </li>`;
 });
 }
 
 loadBranches();
 
-const currentPage = window.location.pathname.split("/").pop();
-document.querySelectorAll(".nav-link").forEach(link => {
-if (link.getAttribute("href") === currentPage) {
-link.classList.add("active");
-}
+const currentPage=location.pathname.split("/").pop();
+document.querySelectorAll(".nav-link").forEach(l=>{
+if(l.getAttribute("href")===currentPage)l.classList.add("active");
 });
-
 </script>
+
 </body>
 </html>
