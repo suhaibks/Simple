@@ -64,3 +64,23 @@ button:hover {
 a {
   color: var(--primary);
 }
+
+/* MOBILE */
+@media (max-width: 768px) {
+
+  body {
+    flex-direction: column;
+  }
+
+  /* HIDE LEFT PANEL (optional but recommended) */
+  .auth-left {
+    display: none;
+  }
+
+  /* FULL WIDTH FORM */
+  .auth-box {
+    width: 100%;
+    padding: 30px 20px;
+  }
+
+}
