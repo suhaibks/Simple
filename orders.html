@@ -25,7 +25,6 @@
 
 <h1>Orders</h1>
 
-<!-- Incoming -->
 <h2>Incoming Orders</h2>
 <table>
 <thead>
@@ -40,7 +39,6 @@
 <tbody id="incomingOrders"></tbody>
 </table>
 
-<!-- Completed -->
 <h2 style="margin-top:40px;">Completed Orders</h2>
 <table>
 <thead>
@@ -69,7 +67,7 @@ function logout(){
   }
 }
 
-/* ensure old data has time */
+/* ensure old orders have time */
 function fixOldOrders(){
   let orders = JSON.parse(localStorage.getItem("orders")) || [];
   let updated = false;
@@ -86,7 +84,7 @@ function fixOldOrders(){
   }
 }
 
-/* simulate incoming orders */
+/* generate order (slower now) */
 function generateOrder(){
   let branches = JSON.parse(localStorage.getItem("branches")) || [];
   if(branches.length === 0) return;
@@ -107,19 +105,26 @@ function generateOrder(){
   localStorage.setItem("orders", JSON.stringify(orders));
 }
 
-/* simulate status progression */
+/* realistic status progression */
 function updateStatus(){
   let orders = JSON.parse(localStorage.getItem("orders")) || [];
 
-  orders.forEach(o=>{
-    if(o.status === "Pending") o.status = "Preparing";
-    else if(o.status === "Preparing") o.status = "Delivered";
+  orders.forEach(o => {
+
+    if(o.status === "Pending" && Math.random() < 0.6){
+      o.status = "Preparing";
+    }
+
+    else if(o.status === "Preparing" && Math.random() < 0.7){
+      o.status = "Delivered";
+    }
+
   });
 
   localStorage.setItem("orders", JSON.stringify(orders));
 }
 
-/* load orders */
+/* load UI */
 function loadOrders(){
   let orders = JSON.parse(localStorage.getItem("orders")) || [];
 
@@ -132,7 +137,7 @@ function loadOrders(){
 
     let time = new Date(o.time).toLocaleString();
 
-    // Incoming: Pending + Preparing
+    // Incoming
     if(o.status === "Pending" || o.status === "Preparing"){
       incomingOrders.innerHTML += `
         <tr>
@@ -144,7 +149,7 @@ function loadOrders(){
         </tr>`;
     }
 
-    // Completed: Delivered only
+    // Completed
     if(o.status === "Delivered"){
       deliveredCount++;
       completedOrders.innerHTML += `
@@ -160,7 +165,7 @@ function loadOrders(){
 
   });
 
-  // ALWAYS show waiting message
+  // Always show waiting line
   incomingOrders.innerHTML += `
     <tr>
       <td colspan="5" style="text-align:center;color:#666;padding:20px;">
@@ -169,7 +174,7 @@ function loadOrders(){
     </tr>
   `;
 
-  // Empty completed state
+  // Empty completed
   if(deliveredCount === 0){
     completedOrders.innerHTML = `
       <tr>
@@ -183,11 +188,9 @@ function loadOrders(){
 /* run system */
 fixOldOrders();
 
-setInterval(()=>{
-  generateOrder();
-  updateStatus();
-  loadOrders();
-},6000);
+setInterval(generateOrder, 12000);   // slower new orders
+setInterval(updateStatus, 5000);     // faster completion
+setInterval(loadOrders, 2000);       // smooth UI refresh
 
 loadOrders();
 
