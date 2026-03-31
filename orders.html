@@ -25,7 +25,7 @@
 
 <h1>Orders</h1>
 
-<!-- Incoming Orders -->
+<!-- Incoming -->
 <h2>Incoming Orders</h2>
 <table>
 <thead>
@@ -40,7 +40,7 @@
 <tbody id="incomingOrders"></tbody>
 </table>
 
-<!-- Completed Orders -->
+<!-- Completed -->
 <h2 style="margin-top:40px;">Completed Orders</h2>
 <table>
 <thead>
@@ -63,143 +63,140 @@
 
 /* logout */
 function logout(){
-if(confirm("Logout?")){
-localStorage.removeItem("loggedIn");
-location.href="login.html";
-}
+  if(confirm("Logout?")){
+    localStorage.removeItem("loggedIn");
+    location.href="login.html";
+  }
 }
 
-/* FIX old data (ensure time exists) */
+/* ensure old data has time */
 function fixOldOrders(){
-let orders=JSON.parse(localStorage.getItem("orders"))||[];
-let updated=false;
+  let orders = JSON.parse(localStorage.getItem("orders")) || [];
+  let updated = false;
 
-orders.forEach(o=>{
-if(!o.time){
-o.time=new Date().toISOString();
-updated=true;
-}
-});
+  orders.forEach(o=>{
+    if(!o.time){
+      o.time = new Date().toISOString();
+      updated = true;
+    }
+  });
 
-if(updated){
-localStorage.setItem("orders",JSON.stringify(orders));
-}
+  if(updated){
+    localStorage.setItem("orders", JSON.stringify(orders));
+  }
 }
 
 /* simulate incoming orders */
 function generateOrder(){
-let branches=JSON.parse(localStorage.getItem("branches"))||[];
-if(branches.length===0)return;
+  let branches = JSON.parse(localStorage.getItem("branches")) || [];
+  if(branches.length === 0) return;
 
-let randomBranch=branches[Math.floor(Math.random()*branches.length)].name;
+  let randomBranch = branches[Math.floor(Math.random()*branches.length)].name;
 
-let orders=JSON.parse(localStorage.getItem("orders"))||[];
+  let orders = JSON.parse(localStorage.getItem("orders")) || [];
 
-orders.push({
-id:Date.now(),
-branch:randomBranch,
-items:"Pizza, Burger",
-amount:Math.floor(Math.random()*500)+100,
-status:"Pending",
-time:new Date().toISOString()
-});
+  orders.push({
+    id: Date.now(),
+    branch: randomBranch,
+    items: "Pizza, Burger",
+    amount: Math.floor(Math.random()*500)+100,
+    status: "Pending",
+    time: new Date().toISOString()
+  });
 
-localStorage.setItem("orders",JSON.stringify(orders));
+  localStorage.setItem("orders", JSON.stringify(orders));
 }
 
-/* simulate status updates */
+/* simulate status progression */
 function updateStatus(){
-let orders=JSON.parse(localStorage.getItem("orders"))||[];
+  let orders = JSON.parse(localStorage.getItem("orders")) || [];
 
-orders.forEach(o=>{
-if(o.status==="Pending") o.status="Preparing";
-else if(o.status==="Preparing") o.status="Delivered";
-});
+  orders.forEach(o=>{
+    if(o.status === "Pending") o.status = "Preparing";
+    else if(o.status === "Preparing") o.status = "Delivered";
+  });
 
-localStorage.setItem("orders",JSON.stringify(orders));
+  localStorage.setItem("orders", JSON.stringify(orders));
 }
 
 /* load orders */
 function loadOrders(){
-let orders=JSON.parse(localStorage.getItem("orders"))||[];
+  let orders = JSON.parse(localStorage.getItem("orders")) || [];
 
-incomingOrders.innerHTML="";
-completedOrders.innerHTML="";
+  incomingOrders.innerHTML = "";
+  completedOrders.innerHTML = "";
 
-let incomingCount=0;
-let deliveredCount=0;
+  let deliveredCount = 0;
 
-orders.forEach(o=>{
+  orders.forEach(o=>{
 
-let time=new Date(o.time).toLocaleString();
+    let time = new Date(o.time).toLocaleString();
 
-/* Incoming = Pending */
-if(o.status==="Pending"){
-incomingCount++;
-incomingOrders.innerHTML+=`
-<tr>
-<td>#${o.id}</td>
-<td>${o.branch}</td>
-<td>${o.items}</td>
-<td>₹${o.amount}</td>
-<td>${o.status}</td>
-</tr>`;
-}
+    // Incoming: Pending + Preparing
+    if(o.status === "Pending" || o.status === "Preparing"){
+      incomingOrders.innerHTML += `
+        <tr>
+          <td>#${o.id}</td>
+          <td>${o.branch}</td>
+          <td>${o.items}</td>
+          <td>₹${o.amount}</td>
+          <td>${o.status}</td>
+        </tr>`;
+    }
 
-/* Completed = Delivered only */
-if(o.status==="Delivered"){
-deliveredCount++;
-completedOrders.innerHTML+=`
-<tr>
-<td>#${o.id}</td>
-<td>${o.branch}</td>
-<td>${o.items}</td>
-<td>₹${o.amount}</td>
-<td>${o.status}</td>
-<td>${time}</td>
-</tr>`;
-}
+    // Completed: Delivered only
+    if(o.status === "Delivered"){
+      deliveredCount++;
+      completedOrders.innerHTML += `
+        <tr>
+          <td>#${o.id}</td>
+          <td>${o.branch}</td>
+          <td>${o.items}</td>
+          <td>₹${o.amount}</td>
+          <td>${o.status}</td>
+          <td>${time}</td>
+        </tr>`;
+    }
 
-});
+  });
 
-/* empty state: incoming */
-if(incomingCount===0){
-incomingOrders.innerHTML=`
-<tr>
-<td colspan="5" style="text-align:center;color:#666;padding:20px;">
-Waiting for incoming orders...
-</td>
-</tr>`;
-}
+  // ALWAYS show waiting message
+  incomingOrders.innerHTML += `
+    <tr>
+      <td colspan="5" style="text-align:center;color:#666;padding:20px;">
+        Waiting for incoming orders...
+      </td>
+    </tr>
+  `;
 
-/* empty state: completed */
-if(deliveredCount===0){
-completedOrders.innerHTML=`
-<tr>
-<td colspan="6" style="text-align:center;color:#666;padding:20px;">
-No completed orders yet
-</td>
-</tr>`;
-}
+  // Empty completed state
+  if(deliveredCount === 0){
+    completedOrders.innerHTML = `
+      <tr>
+        <td colspan="6" style="text-align:center;color:#666;padding:20px;">
+          No completed orders yet
+        </td>
+      </tr>`;
+  }
 }
 
 /* run system */
 fixOldOrders();
 
 setInterval(()=>{
-generateOrder();
-updateStatus();
-loadOrders();
+  generateOrder();
+  updateStatus();
+  loadOrders();
 },6000);
 
 loadOrders();
 
 /* active sidebar */
-const currentPage=location.pathname.split("/").pop();
+const currentPage = location.pathname.split("/").pop();
 document.querySelectorAll(".nav-link").forEach(l=>{
-if(l.getAttribute("href")===currentPage){
-l.classList.add("active");
-}
+  if(l.getAttribute("href")===currentPage){
+    l.classList.add("active");
+  }
 });
 
 </script>
