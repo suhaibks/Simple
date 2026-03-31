@@ -50,8 +50,6 @@ location.href="login.html";
 function addBranch(){
 let name=branchName.value.trim();
 let location=branchLocation.value;
-let manager=branchManager.value;
-let phone=branchPhone.value;
 
 if(!name||!location)return alert("Fill required");
 
@@ -61,9 +59,15 @@ if(branches.some(b=>b.name.toLowerCase()===name.toLowerCase())){
 return alert("Exists");
 }
 
-branches.push({id:Date.now(),name,location,manager,phone});
-localStorage.setItem("branches",JSON.stringify(branches));
+branches.push({
+id:Date.now(),
+name,
+location,
+manager:branchManager.value,
+phone:branchPhone.value
+});
 
+localStorage.setItem("branches",JSON.stringify(branches));
 loadBranches();
 }
 
@@ -82,17 +86,18 @@ branches.forEach((b,i)=>{
 branchList.innerHTML+=`
 <li>
 <strong>${b.name}</strong> (${b.location})<br>
-Manager: ${b.manager||"-"} | Phone: ${b.phone||"-"}
-<br><button onclick="deleteBranch(${i})">Delete</button>
+Manager: ${b.manager||"-"} | Phone: ${b.phone||"-"}<br>
+<button onclick="deleteBranch(${i})">Delete</button>
 </li>`;
 });
 }
 
 loadBranches();
 
-const currentPage=location.pathname.split("/").pop();
+/* nav */
+const p=location.pathname.split("/").pop();
 document.querySelectorAll(".nav-link").forEach(l=>{
-if(l.getAttribute("href")===currentPage)l.classList.add("active");
+if(l.getAttribute("href")===p)l.classList.add("active");
 });
 </script>
 
