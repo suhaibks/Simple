@@ -1,31 +1,21 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Auth</title>
+  <meta charset="UTF-8">
+  <title>Signup</title>
   <link rel="stylesheet" href="auth.css">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
 
-<div class="auth-wrapper">
-
-  <div class="auth-left">
-    <h1>RestroFlow</h1>
-    <p>Manage all your restaurant branches in one place.</p>
-  </div>
-
-  <div class="auth-box">
-    <h2>Login</h2>
-
-    <input type="email" placeholder="Email">
-    <input type="password" placeholder="Password">
-
-    <button>Login</button>
-
-    <p><a href="signup.html">Create account</a></p>
-  </div>
-
+<div class="auth-box">
+  <h2>Create Account</h2>
+  <input type="text" id="name" placeholder="Name">
+  <input type="email" id="email" placeholder="Email">
+  <input type="password" id="password" placeholder="Password">
+  <button onclick="signup()">Sign Up</button>
+  <p>Already have an account? <a href="login.html">Login</a></p>
 </div>
 
+<script src="auth.js"></script>
 </body>
 </html>
