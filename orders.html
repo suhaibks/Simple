@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
 <title>Orders</title>
@@ -26,25 +26,37 @@
 
 <div class="form-box">
 <select id="orderBranch"></select>
+<input id="orderItems" placeholder="Items">
 <input type="number" id="orderAmount" placeholder="Amount">
+<select id="paymentMethod">
+<option>Cash</option><option>UPI</option><option>Card</option>
+</select>
 <select id="orderStatus">
 <option>Pending</option>
+<option>Preparing</option>
 <option>Delivered</option>
 </select>
 <button onclick="addOrder()">Add</button>
 </div>
 
+<h2>Incoming Orders</h2>
 <table>
 <thead>
 <tr>
-<th>ID</th>
-<th>Branch</th>
-<th>Amount</th>
-<th>Status</th>
-<th>Action</th>
+<th>ID</th><th>Branch</th><th>Items</th><th>Amount</th><th>Action</th>
 </tr>
 </thead>
-<tbody id="ordersList"></tbody>
+<tbody id="waitingOrders"></tbody>
+</table>
+
+<h2 style="margin-top:40px;">Accepted Orders</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th><th>Branch</th><th>Items</th><th>Amount</th><th>Status</th>
+</tr>
+</thead>
+<tbody id="acceptedOrders"></tbody>
 </table>
 
 </main>
@@ -52,83 +64,96 @@
 
 <script>
 
-function logout() {
-if (confirm("Logout?")) {
+function logout(){
+if(confirm("Logout?")){
 localStorage.removeItem("loggedIn");
-window.location.href = "login.html";
+location.href="login.html";
 }
 }
 
-/* load branch dropdown */
-function loadBranchOptions() {
-const branches = JSON.parse(localStorage.getItem("branches")) || [];
-const select = document.getElementById("orderBranch");
-
-select.innerHTML = "<option value=''>Select Branch</option>";
-
-branches.forEach(b => {
-select.innerHTML += `<option value="${b.name}">${b.name}</option>`;
+function loadBranchOptions(){
+let branches=JSON.parse(localStorage.getItem("branches"))||[];
+orderBranch.innerHTML="<option value=''>Select Branch</option>";
+branches.forEach(b=>{
+orderBranch.innerHTML+=`<option value="${b.name}">${b.name}</option>`;
 });
 }
 
-function addOrder() {
-const branch = document.getElementById("orderBranch").value;
-const amount = document.getElementById("orderAmount").value;
-const status = document.getElementById("orderStatus").value;
+function addOrder(){
+let branch=orderBranch.value;
+let items=orderItems.value;
+let amount=orderAmount.value;
+let payment=paymentMethod.value;
+let status=orderStatus.value;
 
-if (!branch || !amount) {
-return alert("Select branch and enter amount");
-}
+if(!branch||!items||!amount)return alert("Fill fields");
 
-let orders = JSON.parse(localStorage.getItem("orders")) || [];
+let orders=JSON.parse(localStorage.getItem("orders"))||[];
 
 orders.push({
-id: Date.now(),
-branch,
-amount,
-status
+id:Date.now(),
+branch,items,amount,payment,status,
+time:new Date().toLocaleString()
 });
 
-localStorage.setItem("orders", JSON.stringify(orders));
-
+localStorage.setItem("orders",JSON.stringify(orders));
 loadOrders();
 }
 
-function deleteOrder(index) {
-let orders = JSON.parse(localStorage.getItem("orders")) || [];
-orders.splice(index, 1);
-localStorage.setItem("orders", JSON.stringify(orders));
+function acceptOrder(i){
+let orders=JSON.parse(localStorage.getItem("orders"))||[];
+orders[i].status="Preparing";
+localStorage.setItem("orders",JSON.stringify(orders));
 loadOrders();
 }
 
-function loadOrders() {
-const orders = JSON.parse(localStorage.getItem("orders")) || [];
-const table = document.getElementById("ordersList");
-table.innerHTML = "";
+function loadOrders(){
+let orders=JSON.parse(localStorage.getItem("orders"))||[];
 
-orders.forEach((o, i) => {
-table.innerHTML += `
+waitingOrders.innerHTML="";
+acceptedOrders.innerHTML="";
+
+let count=0;
+
+orders.forEach((o,i)=>{
+if(o.status==="Pending"){
+count++;
+waitingOrders.innerHTML+=`
 <tr>
 <td>#${o.id}</td>
 <td>${o.branch}</td>
+<td>${o.items}</td>
+<td>₹${o.amount}</td>
+<td><button onclick="acceptOrder(${i})">Accept</button></td>
+</tr>`;
+}else{
+acceptedOrders.innerHTML+=`
+<tr>
+<td>#${o.id}</td>
+<td>${o.branch}</td>
+<td>${o.items}</td>
 <td>₹${o.amount}</td>
 <td>${o.status}</td>
-<td><button onclick="deleteOrder(${i})">Delete</button></td>
 </tr>`;
+}
 });
+
+if(count===0){
+waitingOrders.innerHTML=`
+<tr><td colspan="5" style="text-align:center;color:#666;padding:20px;">
+Fetching orders...
+</td></tr>`;
+}
 }
 
 loadBranchOptions();
 loadOrders();
 
-/* active sidebar */
-const currentPage = window.location.pathname.split("/").pop();
-document.querySelectorAll(".nav-link").forEach(link => {
-if (link.getAttribute("href") === currentPage) {
-link.classList.add("active");
-}
+const currentPage=location.pathname.split("/").pop();
+document.querySelectorAll(".nav-link").forEach(l=>{
+if(l.getAttribute("href")===currentPage)l.classList.add("active");
 });
-
 </script>
+
 </body>
 </html>
