@@ -68,3 +68,43 @@ th {
 th, td {
   padding: 10px;
 }
+
+/* MOBILE */
+@media (max-width: 768px) {
+
+  .container {
+    flex-direction: column;
+  }
+
+  /* SIDEBAR → TOP NAV */
+  .sidebar {
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .sidebar a {
+    padding: 6px 10px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 8px;
+  }
+
+  /* MAIN */
+  .main {
+    padding: 15px;
+  }
+
+  /* CARDS STACK */
+  .cards {
+    grid-template-columns: 1fr;
+  }
+
+  /* TABLE SCROLL */
+  table {
+    display: block;
+    overflow-x: auto;
+  }
+
+}
