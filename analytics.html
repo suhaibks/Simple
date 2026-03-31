@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Analytics</title>
+<link rel="stylesheet" href="dashboard.css">
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <h2>RestroFlow</h2>
+  <button onclick="logout()">Logout</button>
+</header>
+
+<div class="container">
+
+<aside class="sidebar">
+  <a href="dashboard.html" class="nav-link">Dashboard</a>
+  <a href="orders.html" class="nav-link">Orders</a>
+  <a href="branches.html" class="nav-link">Branches</a>
+  <a href="analytics.html" class="nav-link">Analytics</a>
+</aside>
+
+<main class="main">
+
+<h1>Analytics</h1>
+
+<h2>Monthly Revenue</h2>
+
+<!-- Table -->
+<table>
+<thead>
+<tr>
+<th>Month</th>
+<th>Total Revenue</th>
+</tr>
+</thead>
+<tbody id="revenueTable"></tbody>
+</table>
+
+<!-- Chart -->
+<div style="margin-top:40px;">
+  <canvas id="revenueChart"></canvas>
+</div>
+
+</main>
+</div>
+
+<script>
+
+function logout(){
+  if(confirm("Logout?")){
+    localStorage.removeItem("loggedIn");
+    location.href="login.html";
+  }
+}
+
+/* Format month */
+function getMonthKey(dateStr){
+  const d = new Date(dateStr);
+  return d.toLocaleString('default', { month: 'short', year: 'numeric' });
+}
+
+function loadAnalytics(){
+
+  const orders = JSON.parse(localStorage.getItem("orders")) || [];
+
+  let monthly = {};
+
+  orders.forEach(o => {
+    if(!o.time) return;
+
+    const month = getMonthKey(o.time);
+
+    if(!monthly[month]){
+      monthly[month] = 0;
+    }
+
+    monthly[month] += Number(o.amount || 0);
+  });
+
+  const table = document.getElementById("revenueTable");
+  table.innerHTML = "";
+
+  const labels = [];
+  const data = [];
+
+  Object.keys(monthly).forEach(month => {
+    table.innerHTML += `
+      <tr>
+        <td>${month}</td>
+        <td>₹${monthly[month]}</td>
+      </tr>
+    `;
+
+    labels.push(month);
+    data.push(monthly[month]);
+  });
+
+  // Chart
+  const ctx = document.getElementById("revenueChart");
+
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Monthly Revenue',
+        data: data,
+        borderWidth: 2,
+        fill: false
+      }]
+    },
+    options: {
+      responsive: true
+    }
+  });
+
+}
+
+loadAnalytics();
+
+/* active sidebar */
+const currentPage = location.pathname.split("/").pop();
+document.querySelectorAll(".nav-link").forEach(l=>{
+  if(l.getAttribute("href")===currentPage){
+    l.classList.add("active");
+  }
+});
+
+</script>
+
+</body>
+</html>
