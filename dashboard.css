@@ -1,32 +1,50 @@
+/* BASE */
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
+  font-family: "Inter", Arial;
+  background: linear-gradient(135deg, #F9EBD9, #EBD6D7);
 }
 
+/* LAYOUT */
 .container {
   display: flex;
 }
 
+/* SIDEBAR */
 .sidebar {
-  width: 200px;
-  background: #111;
+  width: 240px;
+  background: linear-gradient(180deg, #439093, #2f6f72);
   color: white;
   height: 100vh;
-  padding: 20px;
+  padding: 25px;
+  border-radius: 0 20px 20px 0;
+}
+
+.sidebar h2 {
+  margin-bottom: 30px;
 }
 
 .sidebar a {
   display: block;
-  color: white;
-  margin: 10px 0;
+  margin: 12px 0;
   text-decoration: none;
+  color: white;
+  opacity: 0.9;
+  padding: 8px;
+  border-radius: 8px;
 }
 
+.sidebar a:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+/* MAIN */
 .main {
   flex: 1;
-  padding: 20px;
+  padding: 30px;
 }
 
+/* CARDS */
 .cards {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -35,19 +53,33 @@ body {
 }
 
 .cards div {
-  background: #eee;
-  padding: 20px;
+  background: white;
+  padding: 25px;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+  font-weight: 500;
 }
 
+/* TABLE */
 table {
   width: 100%;
   border-collapse: collapse;
+  margin-top: 20px;
+  background: white;
+  border-radius: 15px;
+  overflow: hidden;
 }
 
-table, th, td {
-  border: 1px solid #ccc;
+th {
+  background: #F09893;
+  color: white;
 }
 
 th, td {
-  padding: 10px;
+  padding: 12px;
+  text-align: left;
+}
+
+tr:nth-child(even) {
+  background: #f9f9f9;
 }
