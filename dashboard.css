@@ -79,3 +79,34 @@ th, td {
   border-bottom: 1px solid #eee;
   text-align: left;
 }
+
+.sidebar a.active {
+background: black;
+color: white;
+padding: 8px;
+border-radius: 8px;
+}
+
+.form-box {
+background: white;
+padding: 20px;
+margin-bottom: 20px;
+border-radius: 10px;
+display: flex;
+gap: 10px;
+}
+
+.form-box input, .form-box select {
+padding: 10px;
+border: 1px solid #ddd;
+border-radius: 8px;
+}
+
+.form-box button {
+background: black;
+color: white;
+border: none;
+padding: 10px 15px;
+border-radius: 8px;
+cursor: pointer;
+}
