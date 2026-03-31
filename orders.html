@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Orders</title>
+<link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+
+<header class="topbar">
+<h2>RestroFlow</h2>
+<button onclick="logout()">Logout</button>
+</header>
+
+<div class="container">
+
+<aside class="sidebar">
+<a href="dashboard.html" class="nav-link">Dashboard</a>
+<a href="orders.html" class="nav-link">Orders</a>
+<a href="branches.html" class="nav-link">Branches</a>
+</aside>
+
+<main class="main">
+
+<h1>Orders</h1>
+
+<div class="form-box">
+<select id="orderBranch"></select>
+<input type="number" id="orderAmount" placeholder="Amount">
+<select id="orderStatus">
+<option>Pending</option>
+<option>Delivered</option>
+</select>
+<button onclick="addOrder()">Add</button>
+</div>
+
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Branch</th>
+<th>Amount</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody id="ordersList"></tbody>
+</table>
+
+</main>
+</div>
+
+<script>
+
+function logout() {
+if (confirm("Logout?")) {
+localStorage.removeItem("loggedIn");
+window.location.href = "login.html";
+}
+}
+
+/* load branch dropdown */
+function loadBranchOptions() {
+const branches = JSON.parse(localStorage.getItem("branches")) || [];
+const select = document.getElementById("orderBranch");
+
+select.innerHTML = "<option value=''>Select Branch</option>";
+
+branches.forEach(b => {
+select.innerHTML += `<option value="${b.name}">${b.name}</option>`;
+});
+}
+
+function addOrder() {
+const branch = document.getElementById("orderBranch").value;
+const amount = document.getElementById("orderAmount").value;
+const status = document.getElementById("orderStatus").value;
+
+if (!branch || !amount) {
+return alert("Select branch and enter amount");
+}
+
+let orders = JSON.parse(localStorage.getItem("orders")) || [];
+
+orders.push({
+id: Date.now(),
+branch,
+amount,
+status
+});
+
+localStorage.setItem("orders", JSON.stringify(orders));
+
+loadOrders();
+}
+
+function deleteOrder(index) {
+let orders = JSON.parse(localStorage.getItem("orders")) || [];
+orders.splice(index, 1);
+localStorage.setItem("orders", JSON.stringify(orders));
+loadOrders();
+}
+
+function loadOrders() {
+const orders = JSON.parse(localStorage.getItem("orders")) || [];
+const table = document.getElementById("ordersList");
+table.innerHTML = "";
+
+orders.forEach((o, i) => {
+table.innerHTML += `
+<tr>
+<td>#${o.id}</td>
+<td>${o.branch}</td>
+<td>₹${o.amount}</td>
+<td>${o.status}</td>
+<td><button onclick="deleteOrder(${i})">Delete</button></td>
+</tr>`;
+});
+}
+
+loadBranchOptions();
+loadOrders();
+
+/* active sidebar */
+const currentPage = window.location.pathname.split("/").pop();
+document.querySelectorAll(".nav-link").forEach(link => {
+if (link.getAttribute("href") === currentPage) {
+link.classList.add("active");
+}
+});
+
+</script>
+</body>
+</html>
