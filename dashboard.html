@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>Dashboard</title>
   <link rel="stylesheet" href="dashboard.css">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <!-- Protect dashboard -->
   <script>
     if (localStorage.getItem("loggedIn") !== "true") {
       window.location.href = "login.html";
@@ -13,39 +14,98 @@
 </head>
 <body>
 
+<!-- Top Bar -->
 <header class="topbar">
   <h2>RestroFlow</h2>
-  <div class="user">
-    <span>Welcome</span>
-    <button onclick="logout()">Logout</button>
-  </div>
+  <button onclick="logout()">Logout</button>
 </header>
 
 <div class="container">
 
+  <!-- Sidebar -->
   <aside class="sidebar">
     <a href="#">Dashboard</a>
     <a href="#">Orders</a>
     <a href="#">Menu</a>
     <a href="#">Branches</a>
+    <a href="#">Reports</a>
   </aside>
 
+  <!-- Main -->
   <main class="main">
+
     <h1>Dashboard</h1>
 
-    <div class="data-row">Total Orders: 120</div>
-    <div class="data-row">Revenue: ₹45,000</div>
-    <div class="data-row">Branches: 5</div>
+    <!-- Dynamic Cards -->
+    <div class="cards">
+      <div id="totalOrders">Total Orders: 0</div>
+      <div id="totalRevenue">Revenue: ₹0</div>
+      <div id="totalBranches">Active Branches: 0</div>
+      <div id="pendingOrders">Pending Orders: 0</div>
+    </div>
+
+    <h2>Recent Orders</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Order ID</th>
+          <th>Branch</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="ordersTable"></tbody>
+    </table>
 
   </main>
 
 </div>
 
+<!-- Scripts -->
 <script>
+
 function logout() {
-  localStorage.removeItem("loggedIn");
-  window.location.href = "login.html";
+  const confirmLogout = confirm("Are you sure you want to logout?");
+  if (confirmLogout) {
+    localStorage.removeItem("loggedIn");
+    window.location.href = "login.html";
+  }
 }
+
+function loadDashboard() {
+  const orders = JSON.parse(localStorage.getItem("orders")) || [];
+  const branches = JSON.parse(localStorage.getItem("branches")) || [];
+
+  let totalRevenue = 0;
+  let pending = 0;
+
+  orders.forEach(order => {
+    totalRevenue += Number(order.amount || 0);
+    if (order.status === "Pending") pending++;
+  });
+
+  document.getElementById("totalOrders").innerText = "Total Orders: " + orders.length;
+  document.getElementById("totalRevenue").innerText = "Revenue: ₹" + totalRevenue;
+  document.getElementById("totalBranches").innerText = "Active Branches: " + branches.length;
+  document.getElementById("pendingOrders").innerText = "Pending Orders: " + pending;
+
+  const table = document.getElementById("ordersTable");
+  table.innerHTML = "";
+
+  orders.slice(-5).reverse().forEach(order => {
+    const row = `
+      <tr>
+        <td>#${order.id}</td>
+        <td>${order.branch}</td>
+        <td>${order.status}</td>
+      </tr>
+    `;
+    table.innerHTML += row;
+  });
+}
+
+loadDashboard();
+
 </script>
 
 </body>
