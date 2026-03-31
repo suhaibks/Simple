@@ -1,112 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Dashboard</title>
-  <link rel="stylesheet" href="dashboard.css">
-
-  <!-- Protect dashboard -->
-  <script>
-    if (localStorage.getItem("loggedIn") !== "true") {
-      window.location.href = "login.html";
-    }
-  </script>
+<meta charset="UTF-8">
+<title>Dashboard</title>
+<link rel="stylesheet" href="dashboard.css">
+<script>
+if (localStorage.getItem("loggedIn") !== "true") {
+  window.location.href = "login.html";
+}
+</script>
 </head>
 <body>
 
-<!-- Top Bar -->
 <header class="topbar">
-  <h2>RestroFlow</h2>
-  <button onclick="logout()">Logout</button>
+<h2>RestroFlow</h2>
+<button onclick="logout()">Logout</button>
 </header>
 
 <div class="container">
 
-  <!-- Sidebar -->
-  <aside class="sidebar">
-    <a href="#">Dashboard</a>
-    <a href="#">Orders</a>
-    <a href="#">Menu</a>
-    <a href="#">Branches</a>
-    <a href="#">Reports</a>
-  </aside>
+<aside class="sidebar">
+<a href="dashboard.html" class="nav-link">Dashboard</a>
+<a href="orders.html" class="nav-link">Orders</a>
+<a href="branches.html" class="nav-link">Branches</a>
+</aside>
 
-  <!-- Main -->
-  <main class="main">
+<main class="main">
 
-    <h1>Dashboard</h1>
+<h1>Dashboard</h1>
 
-    <!-- Dynamic Cards -->
-    <div class="cards">
-      <div id="totalOrders">Total Orders: 0</div>
-      <div id="totalRevenue">Revenue: ₹0</div>
-      <div id="totalBranches">Active Branches: 0</div>
-      <div id="pendingOrders">Pending Orders: 0</div>
-    </div>
-
-    <h2>Recent Orders</h2>
-
-    <table>
-      <thead>
-        <tr>
-          <th>Order ID</th>
-          <th>Branch</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody id="ordersTable"></tbody>
-    </table>
-
-  </main>
-
+<div class="cards">
+<div id="totalOrders"></div>
+<div id="totalRevenue"></div>
+<div id="totalBranches"></div>
+<div id="pendingOrders"></div>
 </div>
 
-<!-- Scripts -->
+<h2>Recent Orders</h2>
+
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Branch</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody id="ordersTable"></tbody>
+</table>
+
+</main>
+</div>
+
 <script>
 
 function logout() {
-  const confirmLogout = confirm("Are you sure you want to logout?");
-  if (confirmLogout) {
-    localStorage.removeItem("loggedIn");
-    window.location.href = "login.html";
-  }
+if (confirm("Logout?")) {
+localStorage.removeItem("loggedIn");
+window.location.href = "login.html";
+}
 }
 
 function loadDashboard() {
-  const orders = JSON.parse(localStorage.getItem("orders")) || [];
-  const branches = JSON.parse(localStorage.getItem("branches")) || [];
+const orders = JSON.parse(localStorage.getItem("orders")) || [];
+const branches = JSON.parse(localStorage.getItem("branches")) || [];
 
-  let totalRevenue = 0;
-  let pending = 0;
+let revenue = 0, pending = 0;
 
-  orders.forEach(order => {
-    totalRevenue += Number(order.amount || 0);
-    if (order.status === "Pending") pending++;
-  });
+orders.forEach(o => {
+revenue += Number(o.amount || 0);
+if (o.status === "Pending") pending++;
+});
 
-  document.getElementById("totalOrders").innerText = "Total Orders: " + orders.length;
-  document.getElementById("totalRevenue").innerText = "Revenue: ₹" + totalRevenue;
-  document.getElementById("totalBranches").innerText = "Active Branches: " + branches.length;
-  document.getElementById("pendingOrders").innerText = "Pending Orders: " + pending;
+document.getElementById("totalOrders").innerText = "Total Orders: " + orders.length;
+document.getElementById("totalRevenue").innerText = "Revenue: ₹" + revenue;
+document.getElementById("totalBranches").innerText = "Branches: " + branches.length;
+document.getElementById("pendingOrders").innerText = "Pending: " + pending;
 
-  const table = document.getElementById("ordersTable");
-  table.innerHTML = "";
+const table = document.getElementById("ordersTable");
+table.innerHTML = "";
 
-  orders.slice(-5).reverse().forEach(order => {
-    const row = `
-      <tr>
-        <td>#${order.id}</td>
-        <td>${order.branch}</td>
-        <td>${order.status}</td>
-      </tr>
-    `;
-    table.innerHTML += row;
-  });
+orders.slice(-5).reverse().forEach(o => {
+table.innerHTML += `
+<tr>
+<td>#${o.id}</td>
+<td>${o.branch}</td>
+<td>${o.status}</td>
+</tr>`;
+});
 }
 
 loadDashboard();
 
-</script>
+const currentPage = window.location.pathname.split("/").pop();
+document.querySelectorAll(".nav-link").forEach(link => {
+if (link.getAttribute("href") === currentPage) {
+link.classList.add("active");
+}
+});
 
+</script>
 </body>
 </html>
