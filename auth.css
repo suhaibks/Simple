@@ -1,29 +1,66 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+:root {
+  --primary: #8F2321;
+  --primary-dark: #6f1b1a;
+  --bg-light: #DED0C3;
+  --bg-cool: #A3B5C7;
+  --white: #FFFFFF;
+  --black: #111111;
+}
+
+/* LAYOUT */
 body {
-  font-family: Arial;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  margin: 0;
+  font-family: "Inter";
   height: 100vh;
-  background: #f4f4f4;
+  display: flex;
 }
 
+/* LEFT PANEL */
+.auth-left {
+  flex: 1;
+  background: var(--primary);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 60px;
+}
+
+/* RIGHT PANEL */
 .auth-box {
-  background: white;
-  padding: 30px;
-  width: 300px;
-  text-align: center;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 60px;
+  background: var(--white);
 }
 
+/* INPUT */
 input {
-  width: 100%;
-  padding: 10px;
+  padding: 12px;
   margin: 10px 0;
+  border-radius: 10px;
+  border: 1px solid #ddd;
 }
 
+/* BUTTON */
 button {
-  width: 100%;
-  padding: 10px;
-  background: #ff5a3c;
+  padding: 12px;
+  background: var(--primary);
   color: white;
   border: none;
+  border-radius: 12px;
+  margin-top: 10px;
+}
+
+button:hover {
+  background: var(--primary-dark);
+}
+
+/* LINK */
+a {
+  color: var(--primary);
 }
