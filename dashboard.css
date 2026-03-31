@@ -54,3 +54,36 @@ th, td {
   padding: 12px;
   border-bottom: 1px solid #eee;
 }
+
+@media (max-width: 768px) {
+
+  .container {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    border-right: none;
+    border-bottom: 1px solid #eee;
+  }
+
+  .sidebar a {
+    margin: 5px 10px 5px 0;
+  }
+
+  .main {
+    padding: 20px;
+  }
+
+  .cards {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  table {
+    font-size: 12px;
+  }
+}
