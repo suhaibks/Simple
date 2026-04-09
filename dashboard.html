@@ -4,14 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dashboard</title>
+
 <link rel="stylesheet" href="dashboard.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
 if(localStorage.getItem("loggedIn") !== "true"){
     location.href = "login.html";
 }
 </script>
-
 </head>
 <body>
 
@@ -27,10 +28,8 @@ if(localStorage.getItem("loggedIn") !== "true"){
         <a href="dashboard.html" class="nav-link">Dashboard</a>
         <a href="orders.html" class="nav-link">Orders</a>
         <a href="branches.html" class="nav-link">Branches</a>
-        <a href="analytics.html" class="nav-link">Analytics</a>
     </aside>
 
-    <!-- Main Content -->
     <main class="main">
 
         <h1>Dashboard Overview</h1>
@@ -60,8 +59,31 @@ if(localStorage.getItem("loggedIn") !== "true"){
 
         </div>
 
+        <!-- Revenue Analytics -->
+        <h2 style="margin-top:50px;">Monthly Revenue Analytics</h2>
+
+        <div style="margin:20px 0;">
+            <select id="monthFilter" onchange="loadDashboard()">
+                <option value="all">All Months</option>
+            </select>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Month</th>
+                    <th>Revenue</th>
+                </tr>
+            </thead>
+            <tbody id="revenueTable"></tbody>
+        </table>
+
+        <div style="margin-top:30px;">
+            <canvas id="revenueChart"></canvas>
+        </div>
+
         <!-- Recent Orders -->
-        <h2 style="margin-top:40px;">Recent Orders</h2>
+        <h2 style="margin-top:50px;">Recent Orders</h2>
 
         <table>
             <thead>
@@ -86,44 +108,140 @@ if(localStorage.getItem("loggedIn") !== "true"){
 function logout(){
     if(confirm("Logout from dashboard?")){
         localStorage.removeItem("loggedIn");
-        location.href = "index.html";
+        location.href="index.html";
     }
 }
 
-/* Load Dashboard Data */
+/* Fix missing times */
+function fixOldOrders(){
+    let orders = JSON.parse(localStorage.getItem("orders")) || [];
+
+    orders.forEach(o=>{
+        if(!o.time){
+            o.time = new Date().toISOString();
+        }
+    });
+
+    localStorage.setItem("orders", JSON.stringify(orders));
+}
+
+/* Format Month */
+function getMonthKey(dateStr){
+    const d = new Date(dateStr);
+    return `${d.getFullYear()}-${d.getMonth()}`;
+}
+
+function formatMonth(key){
+    const [year, month] = key.split("-");
+    return new Date(year, month).toLocaleString('default',{
+        month:'short',
+        year:'numeric'
+    });
+}
+
+/* Populate Month Dropdown */
+function populateMonthFilter(keys){
+    let filter = document.getElementById("monthFilter");
+
+    if(filter.options.length > 1) return;
+
+    keys.forEach(key=>{
+        filter.innerHTML += `
+            <option value="${key}">
+                ${formatMonth(key)}
+            </option>
+        `;
+    });
+}
+
+/* Load Dashboard */
 function loadDashboard(){
 
     let orders = JSON.parse(localStorage.getItem("orders")) || [];
     let branches = JSON.parse(localStorage.getItem("branches")) || [];
 
-    let totalRevenue = 0;
+    let revenue = 0;
     let activeOrders = 0;
 
-    orders.forEach(order => {
+    let monthly = {};
 
-        totalRevenue += Number(order.amount || 0);
+    orders.forEach(order=>{
+
+        revenue += Number(order.amount || 0);
 
         if(order.status === "Pending" || order.status === "Preparing"){
             activeOrders++;
         }
 
+        let monthKey = getMonthKey(order.time);
+
+        if(!monthly[monthKey]){
+            monthly[monthKey] = 0;
+        }
+
+        monthly[monthKey] += Number(order.amount || 0);
+
     });
 
-    /* Fill cards */
-    document.getElementById("totalOrders").innerText = orders.length;
-    document.getElementById("totalRevenue").innerText = "₹" + totalRevenue;
-    document.getElementById("totalBranches").innerText = branches.length;
-    document.getElementById("activeOrders").innerText = activeOrders;
+    /* Cards */
+    totalOrders.innerText = orders.length;
+    totalRevenue.innerText = "₹" + revenue;
+    totalBranches.innerText = branches.length;
+    activeOrders.innerText = activeOrders;
+
+    /* Revenue Table + Chart */
+    let sortedMonths = Object.keys(monthly).sort();
+    populateMonthFilter(sortedMonths);
+
+    let selectedMonth = monthFilter.value;
+
+    revenueTable.innerHTML = "";
+
+    let labels = [];
+    let data = [];
+
+    sortedMonths.forEach(month=>{
+
+        if(selectedMonth !== "all" && month !== selectedMonth) return;
+
+        revenueTable.innerHTML += `
+            <tr>
+                <td>${formatMonth(month)}</td>
+                <td>₹${monthly[month]}</td>
+            </tr>
+        `;
+
+        labels.push(formatMonth(month));
+        data.push(monthly[month]);
+
+    });
+
+    if(window.chart){
+        window.chart.destroy();
+    }
+
+    window.chart = new Chart(
+        document.getElementById("revenueChart"),
+        {
+            type:"line",
+            data:{
+                labels:labels,
+                datasets:[{
+                    label:"Revenue",
+                    data:data,
+                    borderWidth:2,
+                    fill:false
+                }]
+            }
+        }
+    );
 
     /* Recent Orders */
-    let table = document.getElementById("recentOrdersTable");
-    table.innerHTML = "";
+    recentOrdersTable.innerHTML="";
 
-    let recentOrders = orders.slice(-5).reverse();
+    orders.slice(-5).reverse().forEach(order=>{
 
-    recentOrders.forEach(order => {
-
-        table.innerHTML += `
+        recentOrdersTable.innerHTML += `
             <tr>
                 <td>#${order.id}</td>
                 <td>${order.branch}</td>
@@ -135,25 +253,16 @@ function loadDashboard(){
 
     });
 
-    if(recentOrders.length === 0){
-        table.innerHTML = `
-            <tr>
-                <td colspan="5" style="text-align:center;padding:20px;color:#666;">
-                    No recent orders available
-                </td>
-            </tr>
-        `;
-    }
-
 }
 
+fixOldOrders();
 loadDashboard();
 
-/* Active Sidebar Highlight */
+/* Sidebar Active */
 const currentPage = location.pathname.split("/").pop();
 
-document.querySelectorAll(".nav-link").forEach(link => {
-    if(link.getAttribute("href") === currentPage){
+document.querySelectorAll(".nav-link").forEach(link=>{
+    if(link.getAttribute("href")===currentPage){
         link.classList.add("active");
     }
 });
