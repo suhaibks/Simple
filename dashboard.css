@@ -200,6 +200,13 @@ canvas{
     color:#777;
 }
 
+footer {
+  text-align: center;
+  padding: 20px;
+  border-top: 1px solid #eee;
+  background: white;
+}
+
 /* RESPONSIVE */
 @media(max-width:900px){
 
