@@ -1,177 +1,243 @@
-body {
-  margin: 0;
-  font-family: 'Inter', sans-serif;
-  background: linear-gradient(to bottom, #ffffff, #f5f5f5);
+/* Google Font Import */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Inter',sans-serif;
 }
 
-/* Top bar */
-.topbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 40px;
-  border-bottom: 1px solid #eee;
-  background: white;
+body{
+    background:#f7f7f7;
+    color:#111;
 }
 
-.topbar button {
-  background: black;
-  color: white;
-  border: none;
-  padding: 8px 14px;
-  border-radius: 8px;
-  cursor: pointer;
+/* TOPBAR */
+.topbar{
+    height:70px;
+    background:#fff;
+    border-bottom:1px solid #eaeaea;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:0 30px;
+    position:sticky;
+    top:0;
+    z-index:100;
 }
 
-/* Layout */
-.container {
-  display: flex;
+.topbar h2{
+    font-size:24px;
+    font-weight:600;
 }
 
-/* Sidebar */
+/* MAIN LAYOUT */
+.container{
+    display:flex;
+    min-height:calc(100vh - 70px);
+}
+
+/* SIDEBAR */
+.sidebar{
+    width:220px;
+    background:#fff;
+    border-right:1px solid #eaeaea;
+    padding:30px 20px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
 .sidebar a{
-    display:block;
-    padding:12px 14px;
-    margin-bottom:10px;
-    border-radius:10px;
     text-decoration:none;
-    color:black;
+    color:#555;
+    padding:12px 15px;
+    border-radius:10px;
     font-weight:500;
     transition:0.3s;
 }
 
-.sidebar a.active{
-    background:black;
-    color:white;
-}
-
-/* Main */
-.main {
-  flex: 1;
-  padding: 40px;
-}
-
-/* Cards */
-.cards {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-  margin: 20px 0;
-}
-
-.cards div {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.04);
-}
-
-/* Table */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: white;
-  border-radius: 10px;
-  overflow: hidden;
-}
-
-th, td {
-  padding: 12px;
-  border-bottom: 1px solid #eee;
-  text-align: left;
-}
-
-.sidebar a.active {
-background: black;
-color: white;
-padding: 8px;
-border-radius: 8px;
-}
-
-.form-box {
-background: white;
-padding: 20px;
-margin-bottom: 20px;
-border-radius: 10px;
-display: flex;
-gap: 10px;
-}
-
-.form-box input, .form-box select {
-padding: 10px;
-border: 1px solid #ddd;
-border-radius: 8px;
-}
-
-.form-box button {
-background: black;
-color: white;
-border: none;
-padding: 10px 15px;
-border-radius: 8px;
-cursor: pointer;
+.sidebar a:hover{
+    background:#f3f3f3;
 }
 
 .sidebar a.active{
-background:black;
-color:white;
-padding:8px;
-border-radius:8px;
+    background:#111;
+    color:#fff;
 }
 
+/* MAIN CONTENT */
+.main{
+    flex:1;
+    padding:35px;
+}
+
+.main h1{
+    font-size:32px;
+    margin-bottom:25px;
+}
+
+.main h2{
+    font-size:22px;
+    margin-bottom:15px;
+    margin-top:10px;
+}
+
+/* BUTTONS */
+button{
+    background:#111;
+    color:#fff;
+    border:none;
+    padding:10px 18px;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:500;
+    transition:0.3s;
+}
+
+button:hover{
+    opacity:0.9;
+}
+
+/* FORM BOX */
 .form-box{
-background:white;
-padding:20px;
-margin-bottom:20px;
-border-radius:10px;
-display:flex;
-gap:10px;
-flex-wrap:wrap;
+    background:#fff;
+    padding:20px;
+    border-radius:14px;
+    margin-bottom:25px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:12px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.03);
 }
 
-.form-box input,.form-box select{
-padding:10px;
-border:1px solid #ddd;
-border-radius:8px;
+.form-box input,
+.form-box select{
+    padding:12px;
+    border:1px solid #ddd;
+    border-radius:10px;
+    outline:none;
+    min-width:200px;
 }
 
-.form-box button,button{
-background:black;
-color:white;
-border:none;
-padding:8px 12px;
-border-radius:8px;
-cursor:pointer;
+/* CARDS */
+.cards{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:20px;
+    margin-bottom:35px;
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: white;
-  border-radius: 10px;
-  overflow: hidden;
-  margin-top: 20px;
+.card{
+    background:#fff;
+    padding:25px;
+    border-radius:16px;
+    box-shadow:0 4px 15px rgba(0,0,0,0.04);
+    border:1px solid #eee;
 }
 
-th, td {
-  padding: 12px;
-  text-align: left;
-  border-bottom: 1px solid #eee;
+.card h3{
+    font-size:16px;
+    color:#666;
+    margin-bottom:10px;
 }
 
-th {
-  background: #fafafa;
-  font-weight: 500;
+.card p{
+    font-size:30px;
+    font-weight:600;
+    color:#111;
 }
 
-tr:hover {
-  background: #f9f9f9;
+/* TABLE */
+table{
+    width:100%;
+    border-collapse:collapse;
+    background:#fff;
+    border-radius:14px;
+    overflow:hidden;
+    margin-top:20px;
+    box-shadow:0 4px 15px rgba(0,0,0,0.04);
 }
 
-footer {
-  text-align: center;
-  padding: 20px;
-  border-top: 1px solid #eee;
-  background: white;
+th{
+    background:#fafafa;
+    font-weight:600;
+    color:#333;
 }
 
+th,td{
+    padding:15px;
+    text-align:left;
+    border-bottom:1px solid #eee;
+}
+
+tr:hover{
+    background:#fafafa;
+}
+
+/* SELECT DROPDOWN */
+select{
+    padding:10px;
+    border-radius:10px;
+    border:1px solid #ddd;
+    background:#fff;
+}
+
+/* CHART AREA */
+canvas{
+    background:#fff;
+    padding:20px;
+    border-radius:14px;
+    margin-top:20px;
+    box-shadow:0 4px 15px rgba(0,0,0,0.04);
+}
+
+/* EMPTY STATES */
+.empty-state{
+    text-align:center;
+    padding:20px;
+    color:#777;
+}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+
+    .container{
+        flex-direction:column;
+    }
+
+    .sidebar{
+        width:100%;
+        flex-direction:row;
+        overflow-x:auto;
+        border-right:none;
+        border-bottom:1px solid #eee;
+    }
+
+    .main{
+        padding:20px;
+    }
+
+    .cards{
+        grid-template-columns:1fr;
+    }
+
+}
+
+@media(max-width:600px){
+
+    .topbar{
+        padding:0 15px;
+    }
+
+    .main h1{
+        font-size:24px;
+    }
+
+    th,td{
+        padding:10px;
+        font-size:14px;
+    }
+
+}
