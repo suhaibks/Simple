@@ -49,10 +49,7 @@ location.href="login.html";
 <tbody id="ordersTable"></tbody>
 </table>
 
-</main>
-</div>
-
-  <h1>Analytics</h1>
+    <h1>Analytics</h1>
 
 <!-- Month Filter -->
 <div style="margin-bottom:20px;">
@@ -79,16 +76,12 @@ location.href="login.html";
 
 </main>
 </div>
+</main>
+</div>
+
+
 
 <script>
-
-/* logout */
-function logout(){
-if(confirm("Logout?")){
-localStorage.removeItem("loggedIn");
-location.href="index.html";
-}
-}
 
 /* fix old data */
 function fixOldOrders(){
@@ -226,10 +219,7 @@ document.querySelectorAll(".nav-link").forEach(l=>{
 if(l.getAttribute("href")===p) l.classList.add("active");
 });
 
-</script>
-
-<script>
-
+  
 function logout(){
 if(confirm("Logout?")){
 localStorage.removeItem("loggedIn");
